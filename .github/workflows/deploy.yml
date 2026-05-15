@@ -1,0 +1,114 @@
+name: Deploy to GCP Cloud Run
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  provision:
+    name: Provision Infrastructure
+    runs-on: ubuntu-latest
+    env:
+      GCP_PROJECT_ID: 'agentflow-496320'
+      GCP_REGION: 'us-central1'
+      GCP_SA_KEY_B64: 'eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsICJwcm9qZWN0X2lkIjogImFnZW50Zmxvdy00OTYzMjAiLCAicHJpdmF0ZV9rZXlfaWQiOiAiZjQ3MzM3MTQwZjVjODA4NWJmY2ViNzU1MDg0ZjViNzA3ZmExMzU0MCIsICJwcml2YXRlX2tleSI6ICItLS0tLUJFR0lOIFBSSVZBVEUgS0VZLS0tLS1cbk1JSUV2QUlCQURBTkJna3Foa2lHOXcwQkFRRUZBQVNDQktZd2dnU2lBZ0VBQW9JQkFRQ2UySTVNYzdTcTFCYnBcbkFSRk05Q0FRejBWNWFUU3ZyUXNZU255M3JzMWZyRGJsTTNlN3hFTjdxYXpCVVc1bC8wRmJHTytwVnJWSkdLKzRcbjFLK1JoemZDbWFKVGdPV1o5VDRQN25xdkhHZEVETkowNGNmTi9wMDk5bVNNQXdBenhaV3NsOGFDVHZzSU9Famtcbm92UEUzTWExQld1QUQ2dlBkSVRTT1JaNjJuaWdFLzgwc2o3cDlzWUxqTFZZZUllNzM2bExWMmh4ZXBEUE9iZitcbmUxTENpNDU0cWk1cXVjSGF6Vi93MWtpaUZVQktVcTZIYjlvNHRreEROQ1NZZWd6RWdiV2IxZnRsdlIwaGQvd2RcblFDdnhkeG9GZ0VENXZBenI1VFFybGZxN0hzS0FxZ0RYOUdrT0YyOXM5OFo4cjBHZlZOSnN0YWtsTmx4cmd6N3JcbmJ6VWJLSzl6QWdNQkFBRUNnZ0VBRlJYakFjUUVNZjc0VVpLNk5MQmRSMDMwUjNNUE10aXlGZFhoYTFLUllZZFBcblBDcVNWTUx2UUUyY0tJZENNOWpuMkl0ZFdPbXhJOVJha3hyc2VWRnROZkJGNjNhN1E2NFp3R3lrTFhXRVFiVEFcbkJSTHBmbTh6ZVVPcFFpcXR6ckdHTmtScGJlZkZDK2pJeUV6WE5nVW1mV1lNU0pJTCtQeGJHenJId0tRYWlna1hcbjlPVmZIT2tMcDBTalVvbU5pR0pLZzRVS0xpeUpCY2JKNUVqYmRNVXJlcEZZdEQxWlMrQVIzbGxYTmdMTUYwSFFcblFxb2NYVFJZZDlhVG5tZjlaNjN3VC9mTHFiTEhCdUhEZ3Y2UnJrK0k3eUNrZXN5djUwbWd2WHNpZlZycW50TGFcbjJielJqOUFTVUloQlNWUkpEdnJGalBZRWd5TFQ3MEYySWRrVmF3OTNwUUtCZ1FET1ZRRGs4VGc5SDg2bkJPa0pcbmNJcFVleDd1bEI4bFFpWUtiZ25RQm5BT3Mrd2lCbVc3bjMyQ0s4R0lQK1haTC91TnNmUVliQlRHMWlSTnhiZGdcbkRHVFJPOFhja1hpSTRxU2dmUFpkbTlMZFQ0SGJQajBBMXhEK3daaElEd0U0bml1WTluYUY4SVlCdTg5RnV1WWhcbng4eG9qOWNIUWVwaFNRVFVmSVFvUjkvbDV3S0JnUURGRlVVSHphRU1FVk9vK1loSUd6bXp6eWpmdElWVlJBUG1cbmNjWHQra2h0UUlDdlptNUI1eXRpWms0cGFheVJRV1NMNDlGeWtwaEM1cU5ibk85d1RQV0lvNjdZZjdZU2d3c2pcbnoyMk4relRDczY1MHNwNS9xQlNqWVNNZGZoZ25lVTdKcmIxTEl0RWVreFR3ZVZsWmJEZTVUd3RZOHRiRmNWaXhcbmxCOUtOSzBnbFFLQmdCUHB4a1ZTTm9CSHNwVVI5eit1K2RxL2F6UFJYZFFsdHpBb2dJL3dIeDU4Sk56L3l3KzVcbmk4NWxWSzlHbzNNN20wYUlseXRJT3hVWms3VmgwSm5YZUY5dEttSm9NNzdhU05Nb1hFcWFnRlpWbHczR3l2SnFcbnp6d1hDUkJqU2xYaGhnbWtON29qaFh0aldkUzcvZnZpb1lxeDN5blhKYnl2NUdSeGcvdXpQQnVmQW9HQWJMSURcblpYOWFrQjVLUnNxQkNFdkRzbERSMlRkbHhoWUNGS214SVVSRmg4UG9kVlNJQU43dlJaRHBFTndRYWZobjdPTlVcbkU5MllEbVhIdVBJLytHN3BpRmZHU2U5OXlvM3RxZTF3SGJ0cmFPclNqOWducEg1ZUM1RzZYVHk3TTZJcSt2NVFcbmhVMEppdFJSMnlNQ1RWaHJEMC95RVRlMWppV3FaaDRzZDYrL3dGVUNnWUJpYVBZMHNJS1RMOXAvQjRRQTNxbUxcbklKbXlSbDhPOGJ4emJHWk5PSVoyVzJsWDR5Q202bVRHeFV2T0pjSGg4bDlwRG8zb3ZDZzREb3BiQWRYcGs2TG1cbjJuU2RuMi9QZ09mSUhaOG9xZzBDNmZjRGM4STh5WElzTlpIMUtqUFNLeVF1MXdrUU1RNGNFd29pUEpyWHlPQmpcbkkxVWdmSG1pZnhrbGNKN04zYTB0VXc9PVxuLS0tLS1FTkQgUFJJVkFURSBLRVktLS0tLVxuIiwgImNsaWVudF9lbWFpbCI6ICJhZ2VudGZsb3ctZGVwbG95ZXJAYWdlbnRmbG93LTQ5NjMyMC5pYW0uZ3NlcnZpY2VhY2NvdW50LmNvbSIsICJjbGllbnRfaWQiOiAiMTAyODc0NTI0Mjc4MzUzOTM5MTk3IiwgImF1dGhfdXJpIjogImh0dHBzOi8vYWNjb3VudHMuZ29vZ2xlLmNvbS9vL29hdXRoMi9hdXRoIiwgInRva2VuX3VyaSI6ICJodHRwczovL29hdXRoMi5nb29nbGVhcGlzLmNvbS90b2tlbiIsICJhdXRoX3Byb3ZpZGVyX3g1MDlfY2VydF91cmwiOiAiaHR0cHM6Ly93d3cuZ29vZ2xlYXBpcy5jb20vb2F1dGgyL3YxL2NlcnRzIiwgImNsaWVudF94NTA5X2NlcnRfdXJsIjogImh0dHBzOi8vd3d3Lmdvb2dsZWFwaXMuY29tL3JvYm90L3YxL21ldGFkYXRhL3g1MDkvYWdlbnRmbG93LWRlcGxveWVyJTQwYWdlbnRmbG93LTQ5NjMyMC5pYW0uZ3NlcnZpY2VhY2NvdW50LmNvbSIsICJ1bml2ZXJzZV9kb21haW4iOiAiZ29vZ2xlYXBpcy5jb20ifQ=='
+    outputs:
+      service_url: ${{ steps.tf_out.outputs.service_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Authenticate with GCP
+        run: |
+          echo '${{ env.GCP_SA_KEY_B64 }}' | base64 -d > /tmp/gcp-key.json
+          gcloud auth activate-service-account --key-file=/tmp/gcp-key.json
+          gcloud config set project '${{ env.GCP_PROJECT_ID }}'
+          echo "GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp-key.json" >> $GITHUB_ENV
+
+      - name: Ensure GCS state bucket exists
+        run: |
+          BUCKET="${{ env.GCP_PROJECT_ID }}-agentflow-tf-state"
+          gsutil ls gs://$BUCKET 2>/dev/null || \
+          gsutil mb -p ${{ env.GCP_PROJECT_ID }} gs://$BUCKET
+
+      - name: Ensure Artifact Registry repository exists
+        run: |
+          REGION="${{ env.GCP_REGION || 'us-central1' }}"
+          gcloud artifacts repositories describe agentflow \
+            --location=$REGION --project=${{ env.GCP_PROJECT_ID }} 2>/dev/null || \
+          gcloud artifacts repositories create agentflow \
+            --repository-format=docker \
+            --location=$REGION \
+            --project=${{ env.GCP_PROJECT_ID }} \
+            --description="AgentFlow generated application images"
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.0"
+
+      - name: Terraform Init
+        working-directory: infra/terraform
+        run: |
+          terraform init \
+            -backend-config="bucket=${{ env.GCP_PROJECT_ID }}-agentflow-tf-state" \
+            -backend-config="prefix=rentacar-4b83b570"
+
+      - name: Terraform Apply
+        working-directory: infra/terraform
+        run: |
+          terraform apply -auto-approve \
+            -var="project_id=${{ env.GCP_PROJECT_ID }}" \
+            -var="region=${{ env.GCP_REGION || 'us-central1' }}" \
+            -var="service_name=rentacar-4b83b570" \
+            -var="image=${{ env.GCP_REGION || 'us-central1' }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/agentflow/rentacar-4b83b570:${{ github.sha }}"
+
+      - name: Capture service URL
+        id: tf_out
+        working-directory: infra/terraform
+        run: echo "service_url=$(terraform output -raw service_url)" >> $GITHUB_OUTPUT
+
+  build-and-deploy:
+    name: Build & Deploy
+    runs-on: ubuntu-latest
+    needs: provision
+    env:
+      GCP_PROJECT_ID: 'agentflow-496320'
+      GCP_REGION: 'us-central1'
+      GCP_SA_KEY_B64: 'eyJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsICJwcm9qZWN0X2lkIjogImFnZW50Zmxvdy00OTYzMjAiLCAicHJpdmF0ZV9rZXlfaWQiOiAiZjQ3MzM3MTQwZjVjODA4NWJmY2ViNzU1MDg0ZjViNzA3ZmExMzU0MCIsICJwcml2YXRlX2tleSI6ICItLS0tLUJFR0lOIFBSSVZBVEUgS0VZLS0tLS1cbk1JSUV2QUlCQURBTkJna3Foa2lHOXcwQkFRRUZBQVNDQktZd2dnU2lBZ0VBQW9JQkFRQ2UySTVNYzdTcTFCYnBcbkFSRk05Q0FRejBWNWFUU3ZyUXNZU255M3JzMWZyRGJsTTNlN3hFTjdxYXpCVVc1bC8wRmJHTytwVnJWSkdLKzRcbjFLK1JoemZDbWFKVGdPV1o5VDRQN25xdkhHZEVETkowNGNmTi9wMDk5bVNNQXdBenhaV3NsOGFDVHZzSU9Famtcbm92UEUzTWExQld1QUQ2dlBkSVRTT1JaNjJuaWdFLzgwc2o3cDlzWUxqTFZZZUllNzM2bExWMmh4ZXBEUE9iZitcbmUxTENpNDU0cWk1cXVjSGF6Vi93MWtpaUZVQktVcTZIYjlvNHRreEROQ1NZZWd6RWdiV2IxZnRsdlIwaGQvd2RcblFDdnhkeG9GZ0VENXZBenI1VFFybGZxN0hzS0FxZ0RYOUdrT0YyOXM5OFo4cjBHZlZOSnN0YWtsTmx4cmd6N3JcbmJ6VWJLSzl6QWdNQkFBRUNnZ0VBRlJYakFjUUVNZjc0VVpLNk5MQmRSMDMwUjNNUE10aXlGZFhoYTFLUllZZFBcblBDcVNWTUx2UUUyY0tJZENNOWpuMkl0ZFdPbXhJOVJha3hyc2VWRnROZkJGNjNhN1E2NFp3R3lrTFhXRVFiVEFcbkJSTHBmbTh6ZVVPcFFpcXR6ckdHTmtScGJlZkZDK2pJeUV6WE5nVW1mV1lNU0pJTCtQeGJHenJId0tRYWlna1hcbjlPVmZIT2tMcDBTalVvbU5pR0pLZzRVS0xpeUpCY2JKNUVqYmRNVXJlcEZZdEQxWlMrQVIzbGxYTmdMTUYwSFFcblFxb2NYVFJZZDlhVG5tZjlaNjN3VC9mTHFiTEhCdUhEZ3Y2UnJrK0k3eUNrZXN5djUwbWd2WHNpZlZycW50TGFcbjJielJqOUFTVUloQlNWUkpEdnJGalBZRWd5TFQ3MEYySWRrVmF3OTNwUUtCZ1FET1ZRRGs4VGc5SDg2bkJPa0pcbmNJcFVleDd1bEI4bFFpWUtiZ25RQm5BT3Mrd2lCbVc3bjMyQ0s4R0lQK1haTC91TnNmUVliQlRHMWlSTnhiZGdcbkRHVFJPOFhja1hpSTRxU2dmUFpkbTlMZFQ0SGJQajBBMXhEK3daaElEd0U0bml1WTluYUY4SVlCdTg5RnV1WWhcbng4eG9qOWNIUWVwaFNRVFVmSVFvUjkvbDV3S0JnUURGRlVVSHphRU1FVk9vK1loSUd6bXp6eWpmdElWVlJBUG1cbmNjWHQra2h0UUlDdlptNUI1eXRpWms0cGFheVJRV1NMNDlGeWtwaEM1cU5ibk85d1RQV0lvNjdZZjdZU2d3c2pcbnoyMk4relRDczY1MHNwNS9xQlNqWVNNZGZoZ25lVTdKcmIxTEl0RWVreFR3ZVZsWmJEZTVUd3RZOHRiRmNWaXhcbmxCOUtOSzBnbFFLQmdCUHB4a1ZTTm9CSHNwVVI5eit1K2RxL2F6UFJYZFFsdHpBb2dJL3dIeDU4Sk56L3l3KzVcbmk4NWxWSzlHbzNNN20wYUlseXRJT3hVWms3VmgwSm5YZUY5dEttSm9NNzdhU05Nb1hFcWFnRlpWbHczR3l2SnFcbnp6d1hDUkJqU2xYaGhnbWtON29qaFh0aldkUzcvZnZpb1lxeDN5blhKYnl2NUdSeGcvdXpQQnVmQW9HQWJMSURcblpYOWFrQjVLUnNxQkNFdkRzbERSMlRkbHhoWUNGS214SVVSRmg4UG9kVlNJQU43dlJaRHBFTndRYWZobjdPTlVcbkU5MllEbVhIdVBJLytHN3BpRmZHU2U5OXlvM3RxZTF3SGJ0cmFPclNqOWducEg1ZUM1RzZYVHk3TTZJcSt2NVFcbmhVMEppdFJSMnlNQ1RWaHJEMC95RVRlMWppV3FaaDRzZDYrL3dGVUNnWUJpYVBZMHNJS1RMOXAvQjRRQTNxbUxcbklKbXlSbDhPOGJ4emJHWk5PSVoyVzJsWDR5Q202bVRHeFV2T0pjSGg4bDlwRG8zb3ZDZzREb3BiQWRYcGs2TG1cbjJuU2RuMi9QZ09mSUhaOG9xZzBDNmZjRGM4STh5WElzTlpIMUtqUFNLeVF1MXdrUU1RNGNFd29pUEpyWHlPQmpcbkkxVWdmSG1pZnhrbGNKN04zYTB0VXc9PVxuLS0tLS1FTkQgUFJJVkFURSBLRVktLS0tLVxuIiwgImNsaWVudF9lbWFpbCI6ICJhZ2VudGZsb3ctZGVwbG95ZXJAYWdlbnRmbG93LTQ5NjMyMC5pYW0uZ3NlcnZpY2VhY2NvdW50LmNvbSIsICJjbGllbnRfaWQiOiAiMTAyODc0NTI0Mjc4MzUzOTM5MTk3IiwgImF1dGhfdXJpIjogImh0dHBzOi8vYWNjb3VudHMuZ29vZ2xlLmNvbS9vL29hdXRoMi9hdXRoIiwgInRva2VuX3VyaSI6ICJodHRwczovL29hdXRoMi5nb29nbGVhcGlzLmNvbS90b2tlbiIsICJhdXRoX3Byb3ZpZGVyX3g1MDlfY2VydF91cmwiOiAiaHR0cHM6Ly93d3cuZ29vZ2xlYXBpcy5jb20vb2F1dGgyL3YxL2NlcnRzIiwgImNsaWVudF94NTA5X2NlcnRfdXJsIjogImh0dHBzOi8vd3d3Lmdvb2dsZWFwaXMuY29tL3JvYm90L3YxL21ldGFkYXRhL3g1MDkvYWdlbnRmbG93LWRlcGxveWVyJTQwYWdlbnRmbG93LTQ5NjMyMC5pYW0uZ3NlcnZpY2VhY2NvdW50LmNvbSIsICJ1bml2ZXJzZV9kb21haW4iOiAiZ29vZ2xlYXBpcy5jb20ifQ=='
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Authenticate with GCP
+        run: |
+          echo '${{ env.GCP_SA_KEY_B64 }}' | base64 -d > /tmp/gcp-key.json
+          gcloud auth activate-service-account --key-file=/tmp/gcp-key.json
+          gcloud config set project '${{ env.GCP_PROJECT_ID }}'
+          echo "GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp-key.json" >> $GITHUB_ENV
+          gcloud auth configure-docker '${{ env.GCP_REGION || 'us-central1' }}-docker.pkg.dev' --quiet
+
+      - name: Build & push image
+        run: |
+          REGION="${{ env.GCP_REGION || 'us-central1' }}"
+          IMAGE="$REGION-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/agentflow/rentacar-4b83b570"
+          docker build -t $IMAGE:${{ github.sha }} -t $IMAGE:latest .
+          docker push $IMAGE:${{ github.sha }}
+          docker push $IMAGE:latest
+
+      - name: Deploy to Cloud Run
+        run: |
+          REGION="${{ env.GCP_REGION || 'us-central1' }}"
+          IMAGE="$REGION-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/agentflow/rentacar-4b83b570:${{ github.sha }}"
+          gcloud run deploy rentacar-4b83b570 \
+            --image $IMAGE \
+            --platform managed \
+            --region $REGION \
+            --project ${{ env.GCP_PROJECT_ID }} \
+            --allow-unauthenticated \
+            --quiet
+
+      - name: Print service URL
+        run: echo "Deployed to ${{ needs.provision.outputs.service_url }}"
